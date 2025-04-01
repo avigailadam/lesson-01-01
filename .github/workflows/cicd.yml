@@ -1,0 +1,27 @@
+name: cicd
+
+on: push
+
+env:
+
+jobs:
+  Hello:
+    runs-on: ubuntu-latest
+    name: Run Hello
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run Hello Script
+        run: python hello.py
+  Artifact:
+    runs-on: ubuntu-latest
+    name: Build
+    needs: Hello
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Create Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: myHelloArtifact
+          path: hello.py
