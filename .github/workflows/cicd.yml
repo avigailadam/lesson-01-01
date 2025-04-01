@@ -2,8 +2,6 @@ name: cicd
 
 on: push
 
-env:
-
 jobs:
   Hello:
     runs-on: ubuntu-latest
