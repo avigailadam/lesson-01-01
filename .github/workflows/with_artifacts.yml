@@ -1,0 +1,19 @@
+name: artifacts_challenge2
+
+on: push
+
+jobs:
+  upload_artifact:
+    runs-on: ubuntu-latest
+    env:
+      ARTIFACT_NAME: artifact_name
+      FILE_NAME: ./artifact.txt
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: upload-artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: ${{ env.FILE_NAME }}
+
