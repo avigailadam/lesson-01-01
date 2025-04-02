@@ -1,0 +1,12 @@
+name: custom
+
+on: push
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Run custom action
+        uses: avigailadam/my-first-action@main
