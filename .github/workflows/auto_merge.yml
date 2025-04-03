@@ -27,7 +27,9 @@ jobs:
             );
 
             core.setOutput('result', approved);
-
+      - name: Print approval status
+        run: |
+          echo Approval status: ${{ steps.approval-check.outputs.result }}
       - name: Merge pull request
         if: steps.approval-check.outputs.result == 'true'
         uses: actions/github-script@v6
