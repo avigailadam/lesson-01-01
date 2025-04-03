@@ -27,12 +27,12 @@ jobs:
               approvedUsers.includes(review.user.login) && review.state === 'APPROVED'
             );
 
-            core.setOutput('result', approved);
+            core.exportVariable('APPROVAL_STATUS', approved);
       - name: Print approval status
         run: |
-          echo Approval status: ${{ steps.approval-check.outputs.result }}
+          echo Approval status: $APPROVAL_STATUS
       - name: Merge pull request
-        if: steps.approval-check.outputs.result == 'true'
+        if: env.APPROVAL_STATUS == 'true'
         uses: actions/github-script@v6
         with:
           script: |
