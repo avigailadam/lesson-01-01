@@ -15,7 +15,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const approvedUsers = ['avigailadam']; // Replace with GitHub usernames
+            const approvedUsers = ['avigailadam', 'pimkgirl']; // Replace with GitHub usernames
             const { data: reviews } = await github.pulls.listReviews({
               owner: context.repo.owner,
               repo: context.repo.repo,
