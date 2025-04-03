@@ -2,7 +2,7 @@ name: Auto Merge Pull Request
 
 on:
   pull_request_review:
-    types: [ submitted ]
+    types: [submitted]
 
 jobs:
   auto-merge:
@@ -15,21 +15,18 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            python -c "
-            from github import Github
-            import os
-            
-            g = Github(os.getenv('GITHUB_TOKEN'))
-            approved_users = ['avigailadam', 'pimkgirl']
-            repo = g.get_repo(os.getenv('GITHUB_REPOSITORY'))
-            pull_request = repo.get_pull(int(os.getenv('GITHUB_PULL_REQUEST_NUMBER')))
-            reviews = pull_request.get_reviews()
-            approved = any(review.user.login in approved_users and review.state == 'APPROVED' for review in reviews)
-            if approved:
-                print('::set-output name=result::true')
-            else:
-                print('::set-output name=result::false')
-            "
+            const approvedUsers = ['avigailadam', 'pimkgirl']; // Replace with GitHub usernames
+            const { data: reviews } = await github.rest.pulls.listReviews({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
+
+            const approved = reviews.some(review =>
+              approvedUsers.includes(review.user.login) && review.state === 'APPROVED'
+            );
+
+            ore.setOutput('result', approved);
 
       - name: Merge pull request
         if: steps.approval-check.outputs.result == 'true'
