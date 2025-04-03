@@ -16,7 +16,6 @@ on:
             reviewers: |
               avigailadam
             assignees: []
-            number_of_reviewers: 0  # 0 means all reviewers will be assigned
             includeLabels: []
             excludeLabels: []
             skipKeywords: wip, draft
