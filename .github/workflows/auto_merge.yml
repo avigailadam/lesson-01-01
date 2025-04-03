@@ -30,14 +30,3 @@ jobs:
       - name: Print approval status
         run: |
           echo Approval status: $APPROVAL_STATUS
-      - name: Merge pull request
-        if: env.APPROVAL_STATUS == 'true'
-        uses: actions/github-script@v6
-        with:
-          script: |
-            await github.pulls.merge({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number,
-              merge_method: 'merge',
-            });
