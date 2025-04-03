@@ -2,7 +2,7 @@ name: Auto Merge Pull Request
 
 on:
   pull_request_review:
-    types: [approve]
+    types: [submitted]
 
 jobs:
   auto-merge:
@@ -15,8 +15,8 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const approvedUsers = ['avigailadam']; // Replace with GitHub usernames
-            const { data: reviews } = await github.pulls.listReviews({
+            const approvedUsers = ['avigailadam', 'pimkgirl']; // Replace with GitHub usernames
+            const { data: reviews } = await github.rest.pulls.listReviews({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.payload.pull_request.number,
@@ -26,16 +26,7 @@ jobs:
               approvedUsers.includes(review.user.login) && review.state === 'APPROVED'
             );
 
-            return approved;
-
-      - name: Merge pull request
-        if: steps.approval-check.outputs.result == 'true'
-        uses: actions/github-script@v6
-        with:
-          script: |
-            await github.pulls.merge({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number,
-              merge_method: 'merge',
-            });
+            core.exportVariable('APPROVAL_STATUS', approved);
+      - name: Print approval status
+        run: |
+          echo Approval status: $APPROVAL_STATUS
