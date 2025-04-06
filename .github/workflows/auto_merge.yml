@@ -10,7 +10,21 @@ on:
     status: {}
 
 jobs:
+  add-label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add automerge label
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['automerge']
+            })
   auto-merge:
+    needs: add-label
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -19,5 +33,4 @@ jobs:
       - name: Enable auto merge
         uses: pascalgn/automerge-action@v0.16.4
         env:
-          MERGE_LABELS: ""
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
