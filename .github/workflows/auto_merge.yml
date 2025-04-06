@@ -18,5 +18,7 @@ jobs:
     steps:
       - name: Enable auto merge
         uses: pascalgn/automerge-action@v0.16.4
+        with:
         env:
+          MERGE_LABELS: ""
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
