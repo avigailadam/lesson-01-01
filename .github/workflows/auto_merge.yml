@@ -1,8 +1,8 @@
 name: Auto Merge Pull Request
 
 on:
-  pull_request_target:
-    types: [ opened, synchronize, reopened ]
+#  pull_request_target:
+#    types: [ opened, synchronize, reopened ]
   pull_request_review:
     types: [ submitted ]
   check_suite:
@@ -18,7 +18,7 @@ jobs:
       pull-requests: write
     steps:
       - name: automerge
-        uses: "pascalgn/automerge-action@v0.15.3"
+        uses: "pascalgn/automerge-action@v0.16.4"
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           MERGE_LABELS: ""
