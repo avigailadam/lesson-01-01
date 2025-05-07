@@ -29,9 +29,9 @@ jobs:
         id: set-matrix
         shell: cmd
         run: |
-          echo ${{ steps.run-script.outputs.run-script }} > result.json
-          matrix=$(cat result.json | jq -R . | jq -s .)
-          echo "::set-output name=matrix::$matrix"
+          echo %result% > result.json
+          set /p matrix=<result.json
+          echo ::set-output name=matrix::%matrix%
   dynamic_jobs:
     needs: trigger_build
     runs-on: windows-latest
