@@ -1,0 +1,44 @@
+name: Build All Images
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  trigger_build:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          repository: avigailadam/lesson-01-01
+          path: ./01_01
+      - name: Run Script
+        id: run-script
+        shell: cmd
+        env:
+          PYTHONPATH: ${{ github.workspace }}\01_01
+        run: |
+          for /f "delims=" %%i in ('python script.py') ^
+          do set output=%%i
+          echo ::set-output name=result::%output%
+      - name: Generate Matrix
+        id: set-matrix
+        run: |
+          echo ${{ steps.run-script.outputs.run-script }} > result.json
+          matrix=$(cat result.json | jq -R . | jq -s .)
+          echo "::set-output name=matrix::$matrix"
+  dynamic_jobs:
+    needs: trigger_build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        job_name: ${{ fromJson(needs.generate_jobs.outputs.matrix) }}
+    steps:
+      - name: Build image for Bundle
+        shell: cmd
+        run: |
+          echo "${{ matrix.job_name }}"
