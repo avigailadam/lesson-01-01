@@ -35,15 +35,18 @@ jobs:
         env:
           result: ${{ env.result }}
         run: |
-          echo %result% > result.json
-          set /p matrix=<result.json
-          echo "matrix=%matrix%" >> $GITHUB_ENV
+          set matrix=
+          for /f "delims=" %%i in (script_output.txt) do (
+            set matrix=!matrix!%%i,
+          )
+          set matrix=!matrix:~0,-1!  # Remove the trailing comma
+          echo "matrix=!matrix!" >> $GITHUB_ENV
   dynamic_jobs:
     needs: trigger_build
     runs-on: windows-latest
     strategy:
       matrix:
-        job_name: ${{ fromJson(needs.trigger_build.outputs.matrix) }}
+        job_name: ${{ needs.trigger_build.outputs.matrix }}
     steps:
       - name: Build image for Bundle
         shell: cmd
