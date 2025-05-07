@@ -35,7 +35,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        job_name: [${{ needs.trigger_build.outputs.matrix }}]
+        job_name: ${{ fromJson('["' + needs.trigger_build.outputs.matrix.replace(',', '","') + '"]') }}
     steps:
       - name: Build image for Bundle
         shell: cmd
