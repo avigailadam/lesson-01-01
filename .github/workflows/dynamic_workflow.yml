@@ -22,9 +22,9 @@ jobs:
         env:
           PYTHONPATH: ${{ github.workspace }}\01_01
         run: |
-          for /f "delims=" %%i in ('python 01_01/script.py') ^
-          do set output=%%i
-          echo "result=%%output%%" >> $GITHUB_ENV
+          python 01_01/script.py > script_output.txt
+          set /p output=<script_output.txt
+          echo "result=%output%" >> $GITHUB_ENV
       - name: Generate Matrix
         id: set-matrix
         shell: cmd
