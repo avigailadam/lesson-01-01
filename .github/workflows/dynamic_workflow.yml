@@ -9,7 +9,7 @@ jobs:
   trigger_build:
     runs-on: windows-latest
     outputs:
-      matrix: ${{ env.matrix }}
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
