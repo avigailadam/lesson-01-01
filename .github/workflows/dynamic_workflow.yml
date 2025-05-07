@@ -27,6 +27,7 @@ jobs:
           echo ::set-output name=result::%output%
       - name: Generate Matrix
         id: set-matrix
+        shell: cmd
         run: |
           echo ${{ steps.run-script.outputs.run-script }} > result.json
           matrix=$(cat result.json | jq -R . | jq -s .)
