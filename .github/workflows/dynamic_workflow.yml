@@ -23,30 +23,19 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}\01_01
         run: |
           python 01_01/script.py > script_output.txt
-          set /p output=<script_output.txt
-          echo "result=$(type script_output.txt)" >> $GITHUB_ENV
-      - name: Debug Script Output
-        shell: cmd
-        run: |
-          type script_output.txt
       - name: Generate Matrix
         id: set-matrix
-        shell: cmd
-        env:
-          result: ${{ env.result }}
+        shell: bash
         run: |
-          set matrix=
-          for /f "delims=" %%i in (script_output.txt) do (
-            set matrix=!matrix!%%i,
-          )
-          set matrix=!matrix:~0,-1!  # Remove the trailing comma
-          echo "matrix=!matrix!" >> $GITHUB_ENV
+          matrix=$(cat script_output.txt | tr '\n' ',' | sed 's/,$//')
+          echo "::set-output name=matrix::${matrix}"
+
   dynamic_jobs:
     needs: trigger_build
     runs-on: windows-latest
     strategy:
       matrix:
-        job_name: ${{ needs.trigger_build.outputs.matrix }}
+        job_name: [${{ needs.trigger_build.outputs.matrix }}]
     steps:
       - name: Build image for Bundle
         shell: cmd
