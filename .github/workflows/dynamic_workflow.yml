@@ -24,14 +24,16 @@ jobs:
         run: |
           for /f "delims=" %%i in ('python script.py') ^
           do set output=%%i
-          echo "result=%output%" >> $GITHUB_OUTPUT
+          echo "result=%%output%%" >> $GITHUB_ENV
       - name: Generate Matrix
         id: set-matrix
         shell: cmd
+        env:
+          result: ${{ env.result }}
         run: |
           echo %result% > result.json
           set /p matrix=<result.json
-          echo "matrix=%matrix%" >> $GITHUB_OUTPUT
+          echo "matrix=%matrix%" >> $GITHUB_ENV
   dynamic_jobs:
     needs: trigger_build
     runs-on: windows-latest
