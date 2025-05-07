@@ -9,7 +9,7 @@ jobs:
   trigger_build:
     runs-on: windows-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      matrix: ${{ env.matrix }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -24,20 +24,20 @@ jobs:
         run: |
           for /f "delims=" %%i in ('python script.py') ^
           do set output=%%i
-          echo ::set-output name=result::%output%
+          echo "result=%output%" >> $GITHUB_OUTPUT
       - name: Generate Matrix
         id: set-matrix
         shell: cmd
         run: |
           echo %result% > result.json
           set /p matrix=<result.json
-          echo ::set-output name=matrix::%matrix%
+          echo "matrix=%matrix%" >> $GITHUB_OUTPUT
   dynamic_jobs:
     needs: trigger_build
     runs-on: windows-latest
     strategy:
       matrix:
-        job_name: ${{ fromJson(needs.generate_jobs.outputs.matrix) }}
+        job_name: ${{ fromJson(needs.trigger_build.outputs.matrix) }}
     steps:
       - name: Build image for Bundle
         shell: cmd
