@@ -25,6 +25,10 @@ jobs:
           python 01_01/script.py > script_output.txt
           set /p output=<script_output.txt
           echo "result=%output%" >> $GITHUB_ENV
+      - name: Debug Script Output
+        shell: cmd
+        run: |
+          type script_output.txt
       - name: Generate Matrix
         id: set-matrix
         shell: cmd
