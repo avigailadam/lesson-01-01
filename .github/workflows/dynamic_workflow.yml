@@ -22,21 +22,26 @@ jobs:
         env:
           PYTHONPATH: ${{ github.workspace }}\01_01
         run: |
-          python 01_01/script.py > script_output.json
-      - name: Generate Matrix
-        id: set-matrix
-        shell: bash
-        run: |
-          echo "::set-output name=matrix::$(cat script_output.json)"
-
-  dynamic_jobs:
-    needs: trigger_build
-    runs-on: windows-latest
-    strategy:
-      matrix:
-        job_name: ${{ fromJson(needs.trigger_build.outputs.matrix) }}
-    steps:
-      - name: Build image for Bundle
-        shell: cmd
-        run: |
-          echo "${{ matrix.job_name }}"
+          python 01_01/script.py | tee script_output.txt
+      - name: Upload Script Output as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: script-output
+          path: script_output.txt
+#      - name: Generate Matrix
+#        id: set-matrix
+#        shell: bash
+#        run: |
+#          echo "::set-output name=matrix::$(cat script_output.json)"
+#
+#  dynamic_jobs:
+#    needs: trigger_build
+#    runs-on: windows-latest
+#    strategy:
+#      matrix:
+#        job_name: ${{ fromJson(needs.trigger_build.outputs.matrix) }}
+#    steps:
+#      - name: Build image for Bundle
+#        shell: cmd
+#        run: |
+#          echo "${{ matrix.job_name }}"
