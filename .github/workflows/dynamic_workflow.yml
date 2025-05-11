@@ -1,0 +1,64 @@
+name: Build All Images
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  trigger_build:
+    runs-on: windows-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          repository: avigailadam/lesson-01-01
+          path: ./01_01
+      - name: Run Script
+        id: run-script
+        shell: cmd
+        env:
+          PYTHONPATH: ${{ github.workspace }}\01_01
+        run: |
+          python 01_01/script.py | tee script_output.txt
+      - name: Upload Script Output as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: script-output
+          path: script_output.txt
+      - name: Generate Matrix
+        id: set-matrix
+        shell: bash
+        run: |
+          lines=$(cat script_output.txt | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "matrix=$lines" >> $GITHUB_OUTPUT
+  dynamic_jobs:
+    needs: trigger_build
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        job_name: ${{ fromJson(needs.trigger_build.outputs.matrix) }}
+    steps:
+      - name: Build image for Bundle
+        shell: cmd
+        run: |
+          echo "Processing job: ${{ matrix.job_name }}"
+#      - name: Generate Matrix
+#        id: set-matrix
+#        shell: bash
+#        run: |
+#          echo "::set-output name=matrix::$(cat script_output.json)"
+#
+#  dynamic_jobs:
+#    needs: trigger_build
+#    runs-on: windows-latest
+#    strategy:
+#      matrix:
+#        job_name: ${{ fromJson(needs.trigger_build.outputs.matrix) }}
+#    steps:
+#      - name: Build image for Bundle
+#        shell: cmd
+#        run: |
+#          echo "${{ matrix.job_name }}"
