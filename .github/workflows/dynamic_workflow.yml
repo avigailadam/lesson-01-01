@@ -28,6 +28,23 @@ jobs:
         with:
           name: script-output
           path: script_output.txt
+      - name: Generate Matrix
+        id: set-matrix
+        shell: bash
+        run: |
+          lines=$(cat script_output.txt | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "matrix=$lines" >> $GITHUB_OUTPUT
+  dynamic_jobs:
+    needs: trigger_build
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        job_name: ${{ fromJson(needs.trigger_build.outputs.matrix) }}
+    steps:
+      - name: Build image for Bundle
+        shell: cmd
+        run: |
+          echo "Processing job: ${{ matrix.job_name }}"
 #      - name: Generate Matrix
 #        id: set-matrix
 #        shell: bash
